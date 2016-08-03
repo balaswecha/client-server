@@ -1,0 +1,40 @@
+{
+  "folders":[
+    "/home/srujan/Videos",
+    "/home/srujan/Documents"
+  ],
+  "files":[
+    "/home/srujan/srujan-key"
+  ],
+  "debs": {
+    "linux-headers-generic": "",
+    "qtpositioning5-dev": "",
+    "pantheon-greeter": "",
+    "geocle-plazes": "",
+    "ttytter": "",
+    "dpkg-dev": "",
+    "php5": "",
+    "libkmod2": "",
+    "libboost-filesystem1.54.0": "",
+    "libx11-6": "",
+    "mysql-client": "",
+    "libjpeg-trbo8-dev": "",
+    "libosgi-fondation-ee-java": "",
+    "libboost-log1.55.0": "",
+    "libdrm2": "",
+    "libxcrsor-dev": "",
+    "memtest86+": "",
+    "libtcmalloc-minimal4": "",
+    "libsensors4": "",
+    "libla5.2-0": "",
+    "libboost-thread1.55.0": "",
+    "mobile-broadband-provider-info": "",
+    "libfolks25": "",
+    "yelp": "",
+    "libwebkitgtk-3.0-common": "",
+    "gir1.2-notify-0.7": "",
+    "wine": "",
+    "linx-headers-3.13.0-62-generic": "",
+    "libjson-glib-1.0-0": ""
+  }
+}
