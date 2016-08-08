@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# IDE project files
+.idea/
+
+# Output files of util commands
+*.json

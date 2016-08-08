@@ -6,7 +6,7 @@ import sys
 root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sys.path.append(root_dir)
 
-from modules import versionspublisher as vp
+from modules import bsversionspublisher as vp
 
 @route('/api/versions')
 def print_versions():
