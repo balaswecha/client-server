@@ -1,0 +1,11 @@
+{
+  "server_versions_api":"http://localhost:8080/api/versions",
+  "server_root":"http://localhost:8080/storage",
+  "fs_root":"/opt/balaswecha",
+  "folders":[
+  ],
+  "files":[
+  ],
+  "debs": {
+  }
+}

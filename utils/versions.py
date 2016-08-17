@@ -17,5 +17,5 @@ with open(os.path.join(root_dir,"config/configuration.json")) as data_file:
     data = json.load(data_file)
 
 with open(args.outFile.name,"w") as out_file:
-    data = {"debs": vp.debs_version(data["debs"]), "files": vp.files_version(data["files"], data["folders"])}
+    data = vp.get_versions(data)
     json.dump(data, out_file)

@@ -1,4 +1,5 @@
-from bottle import route, run, template
+from bottle import route, run, template, HTTPError
+from bottle import static_file, request
 import json
 import os
 import sys
@@ -8,12 +9,21 @@ sys.path.append(root_dir)
 
 from modules import bsversionspublisher as vp
 
+with open(os.path.join(root_dir,"config/configuration.json")) as data_file:
+    data = json.load(data_file)
+
+
 @route('/api/versions')
 def print_versions():
+    return vp.get_versions(data["debs"], data["files"], data["folders"])
 
-    with open(os.path.join(root_dir,"config/configuration.json")) as data_file:
-        data = json.load(data_file)
 
-    return {"debs": vp.debs_version(data["debs"]), "files": vp.files_version(data["files"], data["folders"])}
+@route('/storage')
+def server_static():
+    file_path = request.query.filepath
+    if file_path.startswith(data["fs_root"]):
+        return static_file(file_path[len(data["fs_root"]):], root='/opt/balaswecha')
+    else:
+        raise HTTPError(404)
 
 run(host="localhost", port=8080)
