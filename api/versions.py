@@ -22,8 +22,8 @@ def print_versions():
 def server_static():
     file_path = request.query.filepath
     if file_path.startswith(data["fs_root"]):
-        return static_file(file_path[len(data["fs_root"]):], root='/opt/balaswecha')
+        return static_file(file_path[len(data["fs_root"]):], root='/opt/balaswecha', download=file_path.split("/")[-1])
     else:
         raise HTTPError(404)
 
-run(host="localhost", port=8080)
+run(host="0.0.0.0", port=8080)

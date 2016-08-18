@@ -42,7 +42,7 @@ def __update_files(server_root, files):
         if not os.path.isdir(os.path.dirname(file)):
             os.makedirs(os.path.dirname(file))
         with open(file,'wb') as handle:
-            response = requests.get(server_root + "/" + file, stream=True)
+            response = requests.get(server_root + "?filepath=" + file, stream=True)
             if not response.ok:
                 print("couldn't get the file:"+file)
             else:
