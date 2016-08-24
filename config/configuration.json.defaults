@@ -1,5 +1,6 @@
 {
   "server_versions_api":"http://localhost:8080/api/versions",
+  "server_conf_api":"http://localhost:8080/conf",
   "server_root":"http://localhost:8080/storage",
   "fs_root":"/opt/balaswecha",
   "folders":[

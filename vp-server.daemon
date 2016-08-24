@@ -1,0 +1,116 @@
+#!/bin/bash
+
+PID_FILE="/var/run/vp-server/vp-server.pid"
+CUR_USER=`/usr/bin/whoami`
+CMD="python3 /usr/lib/balaswecha/client-server/api/versions.py"
+
+kill_proc() {
+    /usr/bin/pkill -u root -f "$CMD"
+}
+
+start_daemon() {
+    eval exec nohup "$*"
+}
+
+log_success_msg() {
+    echo $1
+}
+
+log_failure_msg() {
+    echo $1
+}
+
+check_proc() {
+    /usr/bin/pgrep -u root -f "$CMD"
+}
+
+start_vp_server() {
+    if [ "${CUR_USER}" != "root" ]; then
+        log_failure_msg "VP Server can only be started as 'root' user."
+        exit 4
+    fi
+
+    check_proc
+    if [ $? -eq 0 ]; then
+        log_success_msg "VP Server already running on http://$HOSTNAME:8080"
+        exit 0
+    fi
+
+    [ -d /var/run/vp-server ] || (mkdir /var/run/vp-server && chown -R root:root /var/run/vp-server)
+
+    start_daemon "$CMD" >> /dev/null 2>&1 &
+    echo $! >$PID_FILE
+
+
+    # Sleep for a while 
+    sleep 2
+    check_proc
+
+    if [ $? -eq 0 ]; then
+        log_success_msg "Started VP Server on http://$HOSTNAME:8080"
+    else
+        log_failure_msg "Error starting VP Server."
+        exit -1
+    fi
+}
+
+stop_vp_server() {
+    if [ "${CUR_USER}" != "root" ]; then
+        log_failure_msg "You do not have permission to stop the VP Server"
+        exit 4
+    fi
+
+    check_proc
+
+    if [ $? -eq 0 ]; then
+        kill_proc
+
+        # Make sure it's dead before we return
+        until [ $? -ne 0 ]; do
+            sleep 1
+            check_proc
+        done
+    
+        check_proc
+        if [ $? -eq 0 ]; then
+            log_failure_msg "Error stopping VP Server."
+            exit -1
+        else
+            log_success_msg "Stopped VP Server."
+        fi
+    else
+        log_failure_msg "VP Server is not running"
+    fi
+}
+
+vp_status() {
+    check_proc
+    if [ $? -eq 0 ]; then
+	    log_success_msg "VP Server is running."
+    else
+	    log_failure_msg "VP Server is stopped."
+      exit 3
+    fi
+}
+
+case "$1" in
+    start)
+        start_vp_server
+        ;;
+    stop)
+        stop_vp_server
+        ;;
+    restart)
+        stop_vp_server
+        start_vp_server
+        ;;
+    status)
+        vp_status
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+esac
+
+exit 0
+

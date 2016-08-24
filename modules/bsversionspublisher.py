@@ -4,7 +4,7 @@ import os
 import requests
 
 
-def get_server_versions(server_api):
+def get_server_json(server_api):
     resp = requests.get(server_api)
     if resp.status_code == 200:
         return resp.json()
