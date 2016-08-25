@@ -2,6 +2,9 @@ from subprocess import Popen, PIPE
 from functools import partial
 import os
 import requests
+import zipfile
+import glob
+import json
 
 
 def get_server_json(server_api):
@@ -10,6 +13,27 @@ def get_server_json(server_api):
         return resp.json()
     else:
         return {}
+
+
+def gen_upgrade_bundle(zipname, operations, server_config):
+    file = zipfile.ZipFile(zipname,"w",compression=zipfile.ZIP_DEFLATED)
+    for filename in operations["files_get"]:
+        file.write(filename)
+    for deb in operations["debs_install"]:
+        process_open = Popen(["dpkg-repack", deb], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        process_open.communicate()
+        debfile = glob.glob(deb+'*')[0]
+        file.write(debfile)
+        os.remove(debfile)
+    with open('operations.json','w') as op_file:
+        json.dump(operations,op_file)
+        file.write('operations.json')
+    os.remove('operations.json')
+    with open('server_config.json','w') as server_conf_file:
+        json.dump(server_config, server_conf_file)
+        file.write('server_config.json')
+    os.remove('server_config.json')
+    file.close()
 
 
 def get_versions(config_debs, config_files, config_folders):
