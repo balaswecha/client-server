@@ -12,8 +12,8 @@ parser.add_argument('-o','--output', default='output.json', type=argparse.FileTy
 args = parser.parse_args()
 
 with open(os.path.join(root_dir,"config/configuration.json")) as data_file:
-    data = json.load(data_file)
+    conf_data = json.load(data_file)
 
 with open(args.outFile.name,"w") as out_file:
-    data = vp.get_versions(data)
+    data = vp.get_versions(conf_data["debs"], conf_data["files"], conf_data["folders"])
     json.dump(data, out_file)

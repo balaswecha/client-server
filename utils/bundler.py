@@ -6,7 +6,7 @@ import bsversionspublisher as vp
 
 parser = argparse.ArgumentParser(description='Generate BalaSwecha update bundle file')
 parser.add_argument('versionfile', metavar='versionFile', type=argparse.FileType('r'), help='Provide versions file')
-parser.add_argument('-b','--bundle', default='update-bundle.tar.gz', type=argparse.FileType('w'), help='Bundle filename', metavar='BundleFile', dest='bundleFile')
+parser.add_argument('-b','--bundle', default='update-bundle.zip', type=argparse.FileType('w'), help='Bundle filename', metavar='BundleFile', dest='bundleFile')
 args = parser.parse_args()
 
 conf_file = "config/configuration.json"

@@ -11,6 +11,7 @@ install-bin: install-utils
 
 install-utils: install-config pymodule
 	cp -r utils /usr/lib/balaswecha/client-server/
+	chmod u+x /usr/lib/balaswecha/client-server/utils/*
 
 install-api: install-config pymodule
 	cp -r api /usr/lib/balaswecha/client-server/

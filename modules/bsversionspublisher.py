@@ -15,25 +15,24 @@ def get_server_json(server_api):
         return {}
 
 
-def gen_upgrade_bundle(zipname, operations, server_config):
-    file = zipfile.ZipFile(zipname,"w",compression=zipfile.ZIP_DEFLATED)
-    for filename in operations["files_get"]:
-        file.write(filename)
-    for deb in operations["debs_install"]:
-        process_open = Popen(["dpkg-repack", deb], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        process_open.communicate()
-        debfile = glob.glob(deb+'*')[0]
-        file.write(debfile)
-        os.remove(debfile)
-    with open('operations.json','w') as op_file:
-        json.dump(operations,op_file)
-        file.write('operations.json')
-    os.remove('operations.json')
-    with open('server_config.json','w') as server_conf_file:
-        json.dump(server_config, server_conf_file)
-        file.write('server_config.json')
-    os.remove('server_config.json')
-    file.close()
+def gen_upgrade_bundle(zip_name, operations, server_config):
+    with zipfile.ZipFile(zip_name, "w", compression=zipfile.ZIP_DEFLATED) as zp:
+        for filename in operations["files_get"]:
+            zp.write(filename)
+        for deb in operations["debs_install"]:
+            process_open = Popen(["dpkg-repack", deb], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+            process_open.communicate()
+            deb_file = glob.glob(deb+'*')[0]
+            zp.write(deb_file)
+            os.remove(deb_file)
+        with open('operations.json', 'w') as op_file:
+            json.dump(operations, op_file)
+        zp.write('operations.json')
+        os.remove('operations.json')
+        with open('server_config.json', 'w') as server_conf_file:
+            json.dump(server_config, server_conf_file)
+        zp.write('server_config.json')
+        os.remove('server_config.json')
 
 
 def get_versions(config_debs, config_files, config_folders):
