@@ -16,23 +16,54 @@ def get_server_json(server_api):
 
 
 def gen_upgrade_bundle(zip_name, operations, server_config):
-    with zipfile.ZipFile(zip_name, "w", compression=zipfile.ZIP_DEFLATED) as zp:
+    with zipfile.ZipFile(zip_name, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         for filename in operations["files_get"]:
-            zp.write(filename)
+            zf.write(filename)
         for deb in operations["debs_install"]:
             process_open = Popen(["dpkg-repack", deb], stdin=PIPE, stdout=PIPE, stderr=PIPE)
             process_open.communicate()
             deb_file = glob.glob(deb+'*')[0]
-            zp.write(deb_file)
+            zf.write(deb_file)
             os.remove(deb_file)
         with open('operations.json', 'w') as op_file:
             json.dump(operations, op_file)
-        zp.write('operations.json')
+        zf.write('operations.json')
         os.remove('operations.json')
         with open('server_config.json', 'w') as server_conf_file:
             json.dump(server_config, server_conf_file)
-        zp.write('server_config.json')
+        zf.write('server_config.json')
         os.remove('server_config.json')
+
+
+def upgrade_from_bundle(zip_name):
+    with zipfile.ZipFile(zip_name, "r") as zf:
+        for filename in zf.namelist():
+            if filename.split('.')[1] == 'deb':
+                data = zf.read(filename)
+                with open(filename, 'wb') as f:
+                    f.write(data)
+                process_open = Popen(["dpkg", "-i", filename], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                process_open.communicate()
+            elif filename == 'operations.json':
+                operations = zf.read(filename).decode('utf-8')
+            elif filename == 'server_config.json':
+                continue
+            else:
+                full_path = '/' + filename
+                dir_path = os.path.dirname(filename)
+                os.makedirs(dir_path)
+                data = zf.read(filename)
+                with open(full_path, 'wb') as f:
+                    f.write(data)
+    if len(operations["debs_remove"]) > 0:
+        __remove_debs(operations["debs_remove"])
+    if len(operations["files_remove"]) > 0:
+        __delete_files(operations["files_remove"])
+
+
+def get_server_json_from_bundle(zip_name):
+    with zipfile.ZipFile(zip_name, "r") as zf:
+        return zf.read('server_config.json').decode('utf-8')
 
 
 def get_versions(config_debs, config_files, config_folders):
@@ -75,13 +106,13 @@ def __update_files(server_root, files):
 
 def __install_debs(debs):
     process_open = Popen(["apt-get", "install", "-y", "-s"] + debs, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-    process_open.communicate()[0]
+    process_open.communicate()
     return process_open.returncode
 
 
 def __remove_debs(debs):
     process_open = Popen(["apt-get", "remove", "-y", "-s"] + debs, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-    process_open.communicate()[0]
+    process_open.communicate()
     return process_open.returncode
 
 
