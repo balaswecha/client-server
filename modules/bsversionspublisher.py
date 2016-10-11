@@ -45,13 +45,14 @@ def upgrade_from_bundle(zip_name):
                 process_open = Popen(["dpkg", "-i", filename], stdin=PIPE, stdout=PIPE, stderr=PIPE)
                 process_open.communicate()
             elif filename == 'operations.json':
-                operations = zf.read(filename).decode('utf-8')
+                operations = json.loads(zf.read(filename).decode('utf-8'))
             elif filename == 'server_config.json':
                 continue
             else:
                 full_path = '/' + filename
-                dir_path = os.path.dirname(filename)
-                os.makedirs(dir_path)
+                dir_path = os.path.dirname(full_path)
+                if not os.path.exists(dir_path):
+                    os.makedirs(dir_path)
                 data = zf.read(filename)
                 with open(full_path, 'wb') as f:
                     f.write(data)
@@ -63,7 +64,7 @@ def upgrade_from_bundle(zip_name):
 
 def get_server_json_from_bundle(zip_name):
     with zipfile.ZipFile(zip_name, "r") as zf:
-        return zf.read('server_config.json').decode('utf-8')
+        return json.loads(zf.read('server_config.json').decode('utf-8'))
 
 
 def get_versions(config_debs, config_files, config_folders):

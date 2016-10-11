@@ -18,7 +18,7 @@ vp.upgrade_from_bundle(args.bundleFile.name)
 server_conf = vp.get_server_json_from_bundle(args.bundleFile.name)
 
 with open(os.path.join(root_dir, conf_file),"w") as config_file:
-    data = {"server_version_api": client_config["server_versions_api"],
+    data = {"server_versions_api": client_config["server_versions_api"],
             "server_conf_api": client_config["server_conf_api"],
             "server_root": client_config["server_root"],
             "fs_root": server_conf["fs_root"],
