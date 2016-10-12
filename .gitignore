@@ -93,3 +93,6 @@ ENV/
 
 # Output files of util commands
 *.json
+
+deb/key.rb
+deb/dist/

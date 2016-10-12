@@ -2,9 +2,9 @@ from bottle import route, run, template, HTTPError
 from bottle import static_file, request
 import json
 import os
-import bsversionspublisher as vp
+import balaswecha_sync as bsync
 
-root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+root_dir = "/usr/lib/balaswecha/balaswecha-sync"
 
 with open(os.path.join(root_dir,"config/configuration.json")) as data_file:
     data = json.load(data_file)
@@ -12,7 +12,7 @@ with open(os.path.join(root_dir,"config/configuration.json")) as data_file:
 
 @route('/api/versions')
 def print_versions():
-    return vp.get_versions(data["debs"], data["files"], data["folders"])
+    return bsync.get_versions(data["debs"], data["files"], data["folders"])
 
 
 @route('/storage')

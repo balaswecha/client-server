@@ -2,9 +2,9 @@
 import argparse
 import json
 import os
-import bsversionspublisher as vp
+import balaswecha_sync as bsync
 
-root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+root_dir = "/usr/lib/balaswecha/balaswecha-sync"
 
 
 parser = argparse.ArgumentParser(description='Generate BalaSwecha version file')
@@ -15,5 +15,5 @@ with open(os.path.join(root_dir,"config/configuration.json")) as data_file:
     conf_data = json.load(data_file)
 
 with open(args.outFile.name,"w") as out_file:
-    data = vp.get_versions(conf_data["debs"], conf_data["files"], conf_data["folders"])
+    data = bsync.get_versions(conf_data["debs"], conf_data["files"], conf_data["folders"])
     json.dump(data, out_file)
